@@ -1,8 +1,7 @@
 "use client";
-import { useRouter } from "next/router";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
-export default function ListingPage({ params }) {
+export default function ListingPage({ params } : {params: {listingId: string}}) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <SignedIn>
