@@ -9,7 +9,7 @@ import {
   SignInButton,
   SignOutButton,
 } from "@clerk/nextjs";
-import {TopNav} from "~/app/_components/topnav";
+import { TopNav } from "~/app/_components/topnav";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -21,7 +21,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorText: "white",
+        },
+      }}
+    >
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
           <TopNav />

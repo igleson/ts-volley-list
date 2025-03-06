@@ -94,10 +94,8 @@ export default function HomePage() {
         </div>
       </SignedIn>
       <SignedOut>
-        <div className="mb-2 me-2 h-full w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-4xl text-white hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-800">
-          <SignInButton>
-            Você precisa estar logado para criar listas. Clique aqui para isso.
-          </SignInButton>
+        <div className="text-gray-400 text-2xl">
+          Você precisa estar logado para criar listas. Clique no botão acime para isso.
         </div>
       </SignedOut>
     </main>
