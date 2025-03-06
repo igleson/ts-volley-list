@@ -12,7 +12,7 @@ export default function HomePage() {
   const SaveListing = () => {
     CreateListing({ listingName, maxSize, limitDate })
       .then((listing) => {
-        console.log(listing.id);
+        console.log(listing);
       })
       .catch((error) => {
         console.log(error);
