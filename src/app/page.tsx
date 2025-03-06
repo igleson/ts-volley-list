@@ -2,11 +2,22 @@
 
 import { useState } from "react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { CreateListing } from "~/server/queries";
 
 export default function HomePage() {
-  const [listName, setListName] = useState("");
-  const [maxNumber, setMaxNumber] = useState(0);
-  const [limitDatetime, setLimitDatetime] = useState("");
+  const [listingName, setListingName] = useState("");
+  const [maxSize, setMaxSize] = useState(0);
+  const [limitDate, setLimitDate] = useState(new Date());
+
+  const SaveListing = () => {
+    CreateListing({ listingName, maxSize, limitDate })
+      .then((listing) => {
+        console.log(listing.id);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -27,9 +38,9 @@ export default function HomePage() {
                 id="list-name-input"
                 required
                 aria-describedby="helper-text-explanation"
-                value={listName}
+                value={listingName}
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                onChange={(e) => setMaxNumber(Number(e.target.value))}
+                onChange={(e) => setListingName(e.target.value)}
               />
             </div>
             <div className="col-auto flex items-center">
@@ -44,10 +55,10 @@ export default function HomePage() {
               <input
                 type="number"
                 id="max-number-input"
-                value={maxNumber}
+                value={maxSize}
                 aria-describedby="helper-text-explanation"
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                onChange={(e) => setMaxNumber(Number(e.target.value))}
+                onChange={(e) => setMaxSize(Number(e.target.value))}
               />
             </div>
             <div className="col-auto flex items-center">
@@ -62,22 +73,28 @@ export default function HomePage() {
               <input
                 type="datetime-local"
                 id="limit-datetime-input"
-                value={limitDatetime}
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                onChange={(e) => setLimitDatetime(e.target.value)}
+                onChange={(e) => setLimitDate(new Date(e.target.value))}
               />
             </div>
           </div>
           <button
             type="button"
             className="mb-2 me-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+            onClick={() =>
+              CreateListing({
+                listingName,
+                maxSize,
+                limitDate,
+              })
+            }
           >
             Criar lista
           </button>
         </div>
       </SignedIn>
       <SignedOut>
-        <div className="h-full w-full text-4xl text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 rounded-lg px-5 py-2.5 text-center me-2 mb-2">
+        <div className="mb-2 me-2 h-full w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-4xl text-white hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-800">
           <SignInButton>
             Você precisa estar logado para criar listas. Clique aqui para isso.
           </SignInButton>
