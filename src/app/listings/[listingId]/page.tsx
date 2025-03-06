@@ -1,12 +1,13 @@
 "use client";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
-export default function ListingPage({ params } : {params: {listingId: string}}) {
+export default function ListingPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <SignedIn>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          pagina para a lista {params.listingId}
+            pagina para a mostrar a lista
+          {/*pagina para a lista {params.listingId}*/}
         </div>
       </SignedIn>
       <SignedOut>
