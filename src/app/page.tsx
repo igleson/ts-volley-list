@@ -23,6 +23,7 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <SignedIn>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+          <div className="text-gray-200 text-4xl"> Criar Lista</div>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-auto flex items-center">
               <label
@@ -81,13 +82,7 @@ export default function HomePage() {
           <button
             type="button"
             className="mb-2 me-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-            onClick={() =>
-              CreateListing({
-                listingName,
-                maxSize,
-                limitDate,
-              })
-            }
+            onClick={SaveListing}
           >
             Criar lista
           </button>

@@ -4,11 +4,9 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import {
   ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
 } from "@clerk/nextjs";
+
+import { shadesOfPurple } from '@clerk/themes'
 import { TopNav } from "~/app/_components/topnav";
 
 export const metadata: Metadata = {
@@ -23,9 +21,7 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{
-        variables: {
-          colorText: "white",
-        },
+        baseTheme: [shadesOfPurple],
       }}
     >
       <html lang="en" className={`${GeistSans.variable}`}>
