@@ -18,19 +18,19 @@ import {
  */
 export const createTable = pgTableCreator((name) => `ts-volley-list_${name}`);
 
-export const posts = createTable(
-  "post",
+export const listings = createTable(
+  "listing",
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
+    name: varchar("name", { length: 255 }).notNull(),
+    maxSize: integer("max_size"),
+    limitDate: timestamp("limit_date_to_remove_name_and_not_pay", {
+      withTimezone: true,
+    }),
+    ownerId: varchar("ownerId", { length: 255 }).notNull(),
   },
   (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  })
+    nameIndex: index("name_idx").on(example.id),
+    ownerIndex: index("owner_idx").on(example.ownerId),
+  }),
 );
