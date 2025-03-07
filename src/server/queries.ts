@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { ListingEvent } from "~/models/ListingEvent";
 
 export async function CreateListing(request: ListingRequest) {
+
   const { userId } = await auth();
 
   if (!userId) throw Error("Unauthorized");

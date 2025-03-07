@@ -5,31 +5,34 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { CreateListing } from "~/server/queries";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { LoadingSpinner } from "~/components/ui/loadingSpinner";
 
 export default function HomePage() {
   const router = useRouter();
 
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [listingName, setListingName] = useState("");
   const [maxSize, setMaxSize] = useState(0);
   const [limitDate, setLimitDate] = useState(new Date(2025, 3));
 
   const SaveListing = () => {
+    setIsSaving(true);
     toast("criando lista");
     CreateListing({ listingName, maxSize, limitDate })
       .then((listings) => {
         if (listings.length == 1) {
-          toast("lista criada")
+          toast("lista criada");
           router.push(`listings/${listings[0]!.Id}`);
         } else if (listings.length == 0) {
-          toast("lista não pôde ser criada")
+          toast("lista não pôde ser criada");
           throw new Error("Listing not created");
         } else {
-          toast("lista não pôde ser criada")
+          toast("lista não pôde ser criada");
           throw new Error("More than one listing created");
         }
       })
-      .catch((error) => {
-        console.log(error);
+      .finally(() => {
+        setIsSaving(false);
       });
   };
 
@@ -93,13 +96,17 @@ export default function HomePage() {
               />
             </div>
           </div>
-          <button
-            type="button"
-            className="mb-2 me-2 rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-white hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-800"
-            onClick={SaveListing}
-          >
-            Criar lista
-          </button>
+          {!isSaving && (
+            <button
+              type="button"
+              className="mb-2 me-2 rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-white hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-800"
+              onClick={SaveListing}
+              disabled={isSaving}
+            >
+              Criar lista
+            </button>
+          )}
+          {isSaving && <LoadingSpinner />}
         </div>
       </SignedIn>
       <SignedOut>
