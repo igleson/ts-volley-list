@@ -5,7 +5,14 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const coreConfig = {};
+const coreConfig = {
+    images: {
+        remotePatterns: [{ hostname: "img.clerk.com" }]
+    },
+    experimental: {
+        useCache: true
+    }
+};
 
 import {withSentryConfig} from "@sentry/nextjs";
 

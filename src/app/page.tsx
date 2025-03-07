@@ -18,7 +18,7 @@ export default function HomePage() {
   const SaveListing = () => {
     setIsSaving(true);
     toast("criando lista");
-    CreateListing({ listingName, maxSize, limitDate })
+    void CreateListing({ listingName, maxSize, limitDate })
       .then((listings) => {
         if (listings.length == 1) {
           toast("lista criada");

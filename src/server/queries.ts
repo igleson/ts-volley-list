@@ -3,9 +3,7 @@
 import { type ListingRequest } from "~/models/ListingRequest";
 import { db } from "~/server/db";
 import { auth } from "@clerk/nextjs/server";
-import { listingEvents, listings } from "~/server/db/schema";
-import { NextResponse } from "next/server";
-import { ListingEvent } from "~/models/ListingEvent";
+import { listings } from "~/server/db/schema";
 
 export async function CreateListing(request: ListingRequest) {
 
