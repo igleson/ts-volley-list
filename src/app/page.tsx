@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { CreateListing } from "~/server/queries";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const router = useRouter();
@@ -13,13 +14,17 @@ export default function HomePage() {
   const [limitDate, setLimitDate] = useState(new Date(2025, 3));
 
   const SaveListing = () => {
+    toast("criando lista");
     CreateListing({ listingName, maxSize, limitDate })
       .then((listings) => {
-        if (listings.length == 0) {
-          throw new Error("Listing not created");
-        } else if (listings.length == 1) {
+        if (listings.length == 1) {
+          toast("lista criada")
           router.push(`listings/${listings[0]!.Id}`);
+        } else if (listings.length == 0) {
+          toast("lista não pôde ser criada")
+          throw new Error("Listing not created");
         } else {
+          toast("lista não pôde ser criada")
           throw new Error("More than one listing created");
         }
       })
