@@ -42,7 +42,7 @@ export default function HomePage() {
             <div className="col-auto flex items-center">
               <label
                 htmlFor="list-name-input"
-                className="mb-2 block text-sm font-medium text-gray-400 dark:text-white"
+                className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
               >
                 Nome da lista:
               </label>
@@ -54,14 +54,14 @@ export default function HomePage() {
                 required
                 aria-describedby="helper-text-explanation"
                 value={listingName}
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 onChange={(e) => setListingName(e.target.value)}
               />
             </div>
             <div className="col-auto flex items-center">
               <label
                 htmlFor="max-number-input"
-                className="mb-2 block text-sm font-medium text-gray-400 dark:text-white"
+                className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
               >
                 Número máximo de jogadores da lista:
               </label>
@@ -72,14 +72,14 @@ export default function HomePage() {
                 id="max-number-input"
                 value={maxSize}
                 aria-describedby="helper-text-explanation"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 onChange={(e) => setMaxSize(Number(e.target.value))}
               />
             </div>
             <div className="col-auto flex items-center">
               <label
                 htmlFor="limit-datetime-input"
-                className="mb-2 block text-sm font-medium text-gray-400 dark:text-white"
+                className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
               >
                 Data Limite para retirar o nome e não pagar:
               </label>
@@ -88,7 +88,7 @@ export default function HomePage() {
               <input
                 type="datetime-local"
                 id="limit-datetime-input"
-                className="block w-full rounded-lg border border-white bg-gray-50 p-2.5 text-sm text-gray-400 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-white bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 onChange={(e) => setLimitDate(new Date(e.target.value))}
               />
             </div>
@@ -103,7 +103,7 @@ export default function HomePage() {
         </div>
       </SignedIn>
       <SignedOut>
-        <div className="text-2xl text-gray-400">
+        <div className="text-2xl text-slate-200">
           Você precisa estar logado para criar listas. Clique no botão acime
           para isso.
         </div>
