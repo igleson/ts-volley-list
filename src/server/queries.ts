@@ -1,20 +1,24 @@
-'use server'
+"use server";
 
-import {type ListingRequest} from "~/models/ListingRequest";
-import {db} from "~/server/db";
-import {auth} from "@clerk/nextjs/server";
-import {listings} from "~/server/db/schema";
-import {NextResponse} from "next/server";
+import { type ListingRequest } from "~/models/ListingRequest";
+import { db } from "~/server/db";
+import { auth } from "@clerk/nextjs/server";
+import { listingEvents, listings } from "~/server/db/schema";
+import { NextResponse } from "next/server";
+import { ListingEvent } from "~/models/ListingEvent";
 
 export async function CreateListing(request: ListingRequest) {
-    const {userId} = await auth();
+  const { userId } = await auth();
 
-    if (!userId) throw Error("Unauthorized");
+  if (!userId) throw Error("Unauthorized");
 
-    return db.insert(listings).values({
-        name: request.listingName,
-        maxSize: request.maxSize,
-        limitDate: request.limitDate,
-        ownerId: userId
-    }).returning();
+  return db
+    .insert(listings)
+    .values({
+      Name: request.listingName,
+      MaxSize: request.maxSize,
+      LimitDate: request.limitDate,
+      OwnerId: userId,
+    })
+    .returning();
 }

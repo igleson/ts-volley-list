@@ -1,18 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { CreateListing } from "~/server/queries";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const router = useRouter();
+
   const [listingName, setListingName] = useState("");
   const [maxSize, setMaxSize] = useState(0);
-  const [limitDate, setLimitDate] = useState(new Date());
+  const [limitDate, setLimitDate] = useState(new Date(2025, 3));
 
   const SaveListing = () => {
     CreateListing({ listingName, maxSize, limitDate })
-      .then((listing) => {
-        console.log(listing);
+      .then((listings) => {
+        if (listings.length == 0) {
+          throw new Error("Listing not created");
+        } else if (listings.length == 1) {
+          router.push(`listings/${listings[0]!.Id}`);
+        } else {
+          throw new Error("More than one listing created");
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -23,7 +32,7 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <SignedIn>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <div className="text-gray-200 text-4xl"> Criar Lista</div>
+          <div className="text-4xl text-gray-200"> Criar Lista</div>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-auto flex items-center">
               <label
@@ -89,8 +98,9 @@ export default function HomePage() {
         </div>
       </SignedIn>
       <SignedOut>
-        <div className="text-gray-400 text-2xl">
-          Você precisa estar logado para criar listas. Clique no botão acime para isso.
+        <div className="text-2xl text-gray-400">
+          Você precisa estar logado para criar listas. Clique no botão acime
+          para isso.
         </div>
       </SignedOut>
     </main>
