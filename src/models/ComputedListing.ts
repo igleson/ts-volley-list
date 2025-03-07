@@ -1,5 +1,6 @@
 export type ComputedListing = {
   id: string;
+  ownerId: string;
   name: string;
   maxSize: number | null;
   limitDate: Date | null;
