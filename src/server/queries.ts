@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import { listings } from "~/server/db/schema";
 
 export async function CreateListing(request: ListingRequest) {
+  console.log(request);
 
   const { userId } = await auth();
 

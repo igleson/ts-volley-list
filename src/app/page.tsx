@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { CreateListing } from "~/server/queries";
 import { useRouter } from "next/navigation";
@@ -10,15 +10,29 @@ import { LoadingSpinner } from "~/components/ui/loadingSpinner";
 export default function HomePage() {
   const router = useRouter();
 
+  const listingNameRef = useRef<string>("");
+  const maxSizeRef = useRef<number>(12);
+  const limitDateRef = useRef<string>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [listingName, setListingName] = useState("");
-  const [maxSize, setMaxSize] = useState(0);
-  const [limitDate, setLimitDate] = useState(new Date(2025, 3));
+  // const [listingName, setListingName] = useState("");
+  // const [maxSize, setMaxSize] = useState(0);
+  // const [limitDate, setLimitDate] = useState(new Date(2025, 3));
 
   const SaveListing = () => {
     setIsSaving(true);
     toast("criando lista");
-    void CreateListing({ listingName, maxSize, limitDate })
+    console.log(maxSizeRef.current == "");
+    console.log(maxSizeRef.current === "");
+    console.log(maxSizeRef.current);
+    console.log(maxSizeRef.current == null);
+    console.log(maxSizeRef.current === null);
+    console.log(maxSizeRef.current == undefined);
+    console.log(maxSizeRef.current === undefined);
+    void CreateListing({
+      listingName: listingNameRef.current.value,
+      maxSize: maxSizeRef.current === "" ? null : maxSizeRef.current ? maxSizeRef.current.value : null,
+      limitDate: limitDateRef.current ? new Date(limitDateRef.current.value) : null,
+    })
       .then((listings) => {
         if (listings.length == 1) {
           toast("lista criada");
@@ -56,9 +70,8 @@ export default function HomePage() {
                 id="list-name-input"
                 required
                 aria-describedby="helper-text-explanation"
-                value={listingName}
+                ref={listingNameRef}
                 className="block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                onChange={(e) => setListingName(e.target.value)}
               />
             </div>
             <div className="col-auto flex items-center">
@@ -73,10 +86,13 @@ export default function HomePage() {
               <input
                 type="number"
                 id="max-number-input"
-                value={maxSize}
+                required={true}
+                ref={maxSizeRef}
+                min={2}
+                max={50}
+                defaultValue={12}
                 aria-describedby="helper-text-explanation"
                 className="block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                onChange={(e) => setMaxSize(Number(e.target.value))}
               />
             </div>
             <div className="col-auto flex items-center">
@@ -91,8 +107,8 @@ export default function HomePage() {
               <input
                 type="datetime-local"
                 id="limit-datetime-input"
+                ref={limitDateRef}
                 className="block w-full rounded-lg border border-white bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                onChange={(e) => setLimitDate(new Date(e.target.value))}
               />
             </div>
           </div>

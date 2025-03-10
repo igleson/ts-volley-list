@@ -10,7 +10,6 @@ import {
   pgTableCreator,
   timestamp,
   varchar,
-  text,
 } from "drizzle-orm/pg-core";
 import { ListingEventType } from "~/models/ListingEvent";
 
@@ -27,7 +26,7 @@ export const listings = createTable(
   {
     Id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     Name: varchar("name", { length: 255 }).notNull(),
-    MaxSize: integer("max_size"),
+    MaxSize: integer("max_size").notNull(),
     LimitDate: timestamp("limit_date_to_remove_name_and_not_pay", {
       withTimezone: true,
     }),

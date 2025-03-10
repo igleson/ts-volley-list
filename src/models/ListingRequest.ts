@@ -1,5 +1,5 @@
 export type ListingRequest = {
     listingName: string,
-    maxSize: number | null,
+    maxSize: number,
     limitDate: Date | null,
 }
