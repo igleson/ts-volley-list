@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useActionState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { CreateListing } from "~/server/queries";
 import { useRouter } from "next/navigation";
@@ -14,24 +14,16 @@ export default function HomePage() {
   const maxSizeRef = useRef<number>(12);
   const limitDateRef = useRef<string>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  // const [listingName, setListingName] = useState("");
-  // const [maxSize, setMaxSize] = useState(0);
-  // const [limitDate, setLimitDate] = useState(new Date(2025, 3));
 
   const SaveListing = () => {
     setIsSaving(true);
     toast("criando lista");
-    console.log(maxSizeRef.current == "");
-    console.log(maxSizeRef.current === "");
-    console.log(maxSizeRef.current);
-    console.log(maxSizeRef.current == null);
-    console.log(maxSizeRef.current === null);
-    console.log(maxSizeRef.current == undefined);
-    console.log(maxSizeRef.current === undefined);
     void CreateListing({
       listingName: listingNameRef.current.value,
-      maxSize: maxSizeRef.current === "" ? null : maxSizeRef.current ? maxSizeRef.current.value : null,
-      limitDate: limitDateRef.current ? new Date(limitDateRef.current.value) : null,
+      maxSize: maxSizeRef.current.value,
+      limitDate: limitDateRef.current
+        ? new Date(limitDateRef.current.value)
+        : null,
     })
       .then((listings) => {
         if (listings.length == 1) {
