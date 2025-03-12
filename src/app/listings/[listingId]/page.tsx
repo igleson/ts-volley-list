@@ -2,6 +2,10 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { type ComputedListing } from "~/models/ComputedListing";
 import { Invitee, Participant } from "~/app/listings/components/Player";
 import { auth } from "@clerk/nextjs/server";
+import { GetUserInfo } from "~/lib/UserInformation";
+import { zip } from "~/utils/zip";
+import { AddListingEvent } from "~/server/queries";
+import { ListingEventType } from "~/models/ListingEvent";
 
 export default async function ListingPage({
   params,
@@ -22,9 +26,9 @@ export default async function ListingPage({
       {
         id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
       },
-      {
-        id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
-      },
+      // {
+      //   id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
+      // },
     ],
     invitees: [
       {
@@ -47,7 +51,39 @@ export default async function ListingPage({
     ],
   };
 
+  const participantsUserInfoPromises = computedListing.participants.map(
+    (participant) => GetUserInfo(participant.id),
+  );
+
+  const inviteesUserInfoPromises = computedListing.invitees.map((invitee) =>
+    GetUserInfo(invitee.inviter_id),
+  );
+
+  const participantsUserInfo = zip(
+    computedListing.participants,
+    await Promise.all(participantsUserInfoPromises),
+  );
+
+  const inviteesUserInfo = zip(
+    computedListing.invitees,
+    await Promise.all(inviteesUserInfoPromises),
+  );
+
   const loggedUserIsTheOwner = userId === computedListing.ownerId;
+  const loggedUserAlreadyOnList = computedListing.participants.some(
+    (participant) => participant.id === userId,
+  );
+
+  const addMeToListing = async () => {
+    'use server'
+    return await AddListingEvent({
+      listingId,
+      userId: userId!,
+      type: ListingEventType.ADD,
+      date: new Date(),
+      isInvitee: false,
+    });
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -89,21 +125,31 @@ export default async function ListingPage({
           <h1 className="col-auto flex items-center text-2xl">
             Participantes:
           </h1>
-          <br className="col-auto flex items-center" />
-          {computedListing.participants.map((participant) => (
+          {!loggedUserAlreadyOnList && (
+            <button
+              onClick={addMeToListing}
+              className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+            >
+              Me adicionar na lista
+            </button>
+          )}
+          {participantsUserInfo.map(([participant, [name, imageUrl]]) => (
             <Participant
-              key={participant.id}
-              player={participant}
-              canRemove={loggedUserIsTheOwner || participant.id === userId}
+              key={name}
+              ParticipantName={name!}
+              ImageUrl={imageUrl!}
+              CanRemove={loggedUserIsTheOwner || participant.id === userId}
             ></Participant>
           ))}
           <h1 className="col-auto flex items-center text-2xl"> Convidados: </h1>
           <br className="col-auto flex items-center" />
-          {computedListing.invitees.map((invitee) => (
+          {inviteesUserInfo.map(([invitee, [inviterName, inviterImageUrl]]) => (
             <Invitee
               key={`invitee-${invitee.inviter_id}`}
-              player={invitee}
-              canRemove={loggedUserIsTheOwner || invitee.inviter_id === userId}
+              InviteeName={invitee.name}
+              InviterName={inviterName!}
+              InviterImageUrl={inviterImageUrl!}
+              CanRemove={loggedUserIsTheOwner || invitee.inviter_id === userId}
             ></Invitee>
           ))}
         </div>

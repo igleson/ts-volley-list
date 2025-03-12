@@ -1,8 +1,8 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
 import {
+  primaryKey,
   index,
   integer,
   boolean,
@@ -32,9 +32,9 @@ export const listings = createTable(
     }),
     OwnerId: varchar("ownerId", { length: 255 }).notNull(),
   },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.Id),
-    ownerIndex: index("owner_idx").on(example.OwnerId),
+  (table) => ({
+    nameIndex: index("name_idx").on(table.Id),
+    ownerIndex: index("owner_idx").on(table.OwnerId),
   }),
 );
 
@@ -46,13 +46,16 @@ export const ListingEventTypeEnum = pgEnum("type", [
 export const listingEvents = createTable(
   "listing_events",
   {
-    listingId: varchar("listing_id", { length: 255 }).notNull(),
+    listingId: integer("listing_id").notNull(),
     userId: varchar("user_id", { length: 255 }).notNull(),
     date: timestamp("date", { withTimezone: true }).notNull(),
     isInvitee: boolean("is_invitee").notNull(),
-    type: ListingEventTypeEnum("type").default(ListingEventType.ADD.toString()),
+    type: ListingEventTypeEnum("type").default(ListingEventType.ADD.toString()).notNull(),
   },
-  (example) => ({
-    nameIndex: index("listing_id_idx").on(example.listingId),
+  (table) => ({
+    primaryKey: primaryKey({
+      columns: [table.listingId, table.userId, table.date],
+    }),
+    nameIndex: index("listing_id_idx").on(table.listingId),
   }),
 );

@@ -120,4 +120,16 @@ body {
     body {
         @apply bg-background text-foreground;
     }
+
+    button:not(button.cl-userButtonTrigger) {
+        @apply rounded-lg p-3 text-center text-white hover:bg-gradient-to-br focus:outline-none dark:focus:ring-blue-800;
+    }
+
+    button:disabled:not(button.cl-userButtonTrigger) {
+        @apply cursor-not-allowed opacity-50;
+    }
+
+    input:disabled:not(button.cl-userButtonTrigger) {
+        @apply cursor-not-allowed opacity-50;
+    }
 }
