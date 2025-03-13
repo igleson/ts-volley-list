@@ -19,8 +19,7 @@ export default async function ListingPage({
   const computedListing: ComputedListing = {
     id: listingId,
     ownerId: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-    name: "Mockada",
-    maxSize: 10,
+    name: "name",
     limitDate: new Date(2025, 4, 1),
     participants: [
       {

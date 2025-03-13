@@ -4,8 +4,8 @@ export type ComputedListing = {
   id: number;
   ownerId: string;
   name: string;
-  maxSize: number | null;
-  limitDate: Date | null;
+  maxSize?: number;
+  limitDate?: Date;
   participants: Participant[];
   invitees: Invitee[];
   payers: (Participant | Invitee)[];

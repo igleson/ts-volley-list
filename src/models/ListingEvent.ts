@@ -1,6 +1,6 @@
 export type ListingEvent = {
   userId: string;
-  listingId: string;
+  listingId: number;
   date: Date;
   isInvitee: boolean;
   type: ListingEventType;
