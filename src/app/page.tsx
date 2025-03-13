@@ -48,6 +48,13 @@ export default function HomePage() {
   const SaveListing = () => {
     setIsSaving(true);
     toast("criando lista");
+    console.log({
+      listingName: listingNameRef.current.value,
+      maxSize: maxSizeRef.current.value,
+      limitDate: limitDateRef.current
+          ? new Date(limitDateRef.current.value)
+          : null,
+    })
     void CreateListing({
       listingName: listingNameRef.current.value,
       maxSize: maxSizeRef.current.value,
@@ -130,22 +137,22 @@ export default function HomePage() {
             </div>
             <div className="col-auto flex items-center gap-0">
               <input
-                  checked={hasLimitDate}
-                  onChange={(_) => setHasLimitDate(!hasLimitDate)}
-                  type="checkbox"
-                  className="h-4 w-4 rounded-lg border-gray-300 bg-slate-700 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                checked={hasLimitDate}
+                onChange={(_) => setHasLimitDate(!hasLimitDate)}
+                type="checkbox"
+                className="h-4 w-4 rounded-lg border-gray-300 bg-slate-700 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               />
               <ValidatedInput<Date>
-                  type="datetime-local"
-                  id="limit-datetime-input"
-                  required={hasLimitDate}
-                  disabled={!hasLimitDate}
-                  ref={limitDateRef}
-                  min={moment(minDate).format("YYYY-MM-DDTHH:mm")}
-                  defaultValue={moment(minDate).format("YYYY-MM-DDTHH:mm")}
-                  zodType={limitDateSchema}
-                  intoType={(str) => new Date(str)}
-                  onValidation={setIsDateValid}
+                type="datetime-local"
+                id="limit-datetime-input"
+                required={hasLimitDate}
+                disabled={!hasLimitDate}
+                ref={limitDateRef}
+                min={moment(minDate).format("YYYY-MM-DDTHH:mm")}
+                defaultValue={moment(minDate).format("YYYY-MM-DDTHH:mm")}
+                zodType={limitDateSchema}
+                intoType={(str) => new Date(str)}
+                onValidation={setIsDateValid}
               />
             </div>
           </div>
@@ -153,7 +160,9 @@ export default function HomePage() {
             <button
               className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
               onClick={SaveListing}
-              disabled={isSaving || !isNameValid || !isMaxValueValid || !isDateValid}
+              disabled={
+                isSaving || !isNameValid || !isMaxValueValid || !isDateValid
+              }
             >
               Criar lista
             </button>
