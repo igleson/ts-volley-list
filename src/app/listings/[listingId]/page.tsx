@@ -10,7 +10,7 @@ import { ListingEventType } from "~/models/ListingEvent";
 export default async function ListingPage({
   params,
 }: {
-  params: Promise<{ listingId: string }>;
+  params: Promise<{ listingId: number }>;
 }) {
   const { listingId } = await params;
 
