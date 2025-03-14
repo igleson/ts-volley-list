@@ -12,7 +12,7 @@ type ParticipantProps = {
 
 export function Participant(props: ParticipantProps) {
   const [pending, setPending] = useState<boolean>(true);
-  const [[name, imageUrl], setUserInfo] = useState<(string | null)[]>([]);
+  const [[name, imageUrl], setUserInfo] = useState<(string | null)[]>(["carregando..."]);
 
   useEffect(() => {
     GetUserInfo(props.id)
@@ -52,7 +52,7 @@ export function Participant(props: ParticipantProps) {
         </>
 
         <strong className="flex flex-auto items-center px-3">
-          <i>{pending ? "carregando..." : name}</i>
+          <i>{name}</i>
         </strong>
       </div>
       <div className="col-auto items-end">
@@ -77,7 +77,7 @@ export function Invitee(props: InviteeProps) {
   const [pending, setPending] = useState<boolean>(true);
   const [[InviterName, InviterImageUrl], setUserInfo] = useState<
     (string | null)[]
-  >([]);
+  >(["carregando..."]);
 
   useEffect(() => {
     GetUserInfo(props.InviterId)
@@ -120,7 +120,7 @@ export function Invitee(props: InviteeProps) {
           )}
 
           <strong className="flex flex-auto items-center p-2">
-            <i>{pending ? "carregando..." : InviterName}</i>
+            <i>{InviterName}</i>
           </strong>
         </div>
         <div className="col-auto items-end">
