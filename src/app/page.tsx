@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useRef, useState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loadingSpinner";
 import { type ErrorMapCtx, z, type ZodError } from "zod";
-import * as moment from "moment";
+import moment from "moment";
 import { ValidatedInput } from "~/components/ui/ValidatedInput";
 
 z.setErrorMap((issue: z.ZodIssueOptionalMessage, ctx: ErrorMapCtx) => {
@@ -31,11 +31,12 @@ const limitDateSchema = z
   .min(new Date(), { message: "Data limite não pode estar no passado" });
 
 export default function HomePage() {
+  const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
   const router = useRouter();
 
   const listingNameRef = useRef<string>("Nova lista");
   const maxSizeRef = useRef<number>(12);
-  const limitDateRef = useRef<string>(null);
+  const limitDateRef = useRef<Date>(minDate);
   const [hasLimitDate, setHasLimitDate] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
@@ -43,22 +44,13 @@ export default function HomePage() {
   const [isMaxValueValid, setIsMaxValueValid] = useState<boolean>(true);
   const [isDateValid, setIsDateValid] = useState<boolean>(true);
 
-  const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
-
   const SaveListing = () => {
     setIsSaving(true);
     toast("criando lista");
-    console.log({
-      listingName: listingNameRef.current.value,
-      maxSize: maxSizeRef.current.value,
-      limitDate: limitDateRef.current
-          ? new Date(limitDateRef.current.value)
-          : null,
-    })
     void CreateListing({
       listingName: listingNameRef.current.value,
       maxSize: maxSizeRef.current.value,
-      limitDate: limitDateRef.current
+      limitDate: hasLimitDate
         ? new Date(limitDateRef.current.value)
         : null,
     })
@@ -172,8 +164,7 @@ export default function HomePage() {
       </SignedIn>
       <SignedOut>
         <div className="text-2xl text-slate-200">
-          Você precisa estar logado para criar listas. Clique no botão acime
-          para isso.
+          Você precisa estar logado para criar listas. Clique no botão acima para isso.
         </div>
       </SignedOut>
     </main>

@@ -13,7 +13,6 @@ export async function CreateListing(request: ListingRequest) {
   const { userId } = await auth();
 
   if (!userId) throw Error("Unauthorized");
-
   return db
     .insert(listings)
     .values({
