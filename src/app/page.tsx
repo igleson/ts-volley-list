@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useRef, useState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
@@ -30,13 +30,23 @@ const limitDateSchema = z
   .date()
   .min(new Date(), { message: "Data limite não pode estar no passado" });
 
+function NewInputElement(starting: string) {
+  const element = document.createElement("input");
+  element.value = starting;
+  return element;
+}
+
 export default function HomePage() {
   const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
   const router = useRouter();
 
-  const listingNameRef = useRef<string>("Nova lista");
-  const maxSizeRef = useRef<number>(12);
-  const limitDateRef = useRef<Date>(minDate);
+  const listingNameRef = useRef<HTMLInputElement>(
+    NewInputElement("Nova lista"),
+  );
+  const maxSizeRef = useRef<HTMLInputElement>(NewInputElement("10"));
+  const limitDateRef = useRef<HTMLInputElement>(
+    NewInputElement(moment(minDate).format("YYYY-MM-DDTHH:mm")),
+  );
   const [hasLimitDate, setHasLimitDate] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
@@ -48,11 +58,9 @@ export default function HomePage() {
     setIsSaving(true);
     toast("criando lista");
     void CreateListing({
-      listingName: listingNameRef.current,
-      maxSize: maxSizeRef.current,
-      limitDate: hasLimitDate
-        ? new Date(limitDateRef.current)
-        : null,
+      listingName: listingNameRef.current.value,
+      maxSize: maxSizeRef.current.valueAsNumber,
+      limitDate: hasLimitDate ? limitDateRef.current.valueAsDate : null,
     })
       .then((listings) => {
         if (listings.length == 1) {
@@ -72,7 +80,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center text-white">
       <SignedIn>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <div className="text-4xl text-gray-200"> Criar Lista</div>
@@ -132,9 +140,9 @@ export default function HomePage() {
                 checked={hasLimitDate}
                 onChange={(_) => setHasLimitDate(!hasLimitDate)}
                 type="checkbox"
-                className="h-4 w-4 rounded-lg border-gray-300 bg-slate-700 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                className="h-4 w-4 rounded-lg border-slate-900 bg-slate-700 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
               />
-              <ValidatedInput<Date>
+              <ValidatedInput
                 type="datetime-local"
                 id="limit-datetime-input"
                 required={hasLimitDate}
@@ -143,7 +151,7 @@ export default function HomePage() {
                 min={moment(minDate).format("YYYY-MM-DDTHH:mm")}
                 defaultValue={moment(minDate).format("YYYY-MM-DDTHH:mm")}
                 zodType={limitDateSchema}
-                intoType={(str) => new Date(str)}
+                intoType={(str) => (str ? new Date(str) : undefined)}
                 onValidation={setIsDateValid}
               />
             </div>
@@ -164,7 +172,8 @@ export default function HomePage() {
       </SignedIn>
       <SignedOut>
         <div className="text-2xl text-slate-200">
-          Você precisa estar logado para criar listas. Clique no botão acima para isso.
+          Você precisa estar logado para criar listas. Clique no botão acima
+          para isso.
         </div>
       </SignedOut>
     </main>
