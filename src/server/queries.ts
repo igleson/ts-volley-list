@@ -33,6 +33,45 @@ export async function AddListingEvent(event: ListingEvent) {
   return db.insert(listingEvents).values(event).returning();
 }
 
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
+
+export async function GetMockedComputedListing(listingId: number): Promise<ComputedListing> {
+  await delay(1000);
+  return {
+    id: listingId,
+    ownerId: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
+    name: "name",
+    limitDate: new Date(2025, 4, 1),
+    participants: [
+      {
+        id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
+      },
+    ],
+    invitees: [
+      {
+        inviter_id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
+        name: "biel",
+      },
+      {
+        inviter_id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
+        name: "adriano",
+      },
+    ],
+    payers: [
+      {
+        id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
+      },
+      {
+        inviter_id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
+        name: "biel",
+      },
+    ],
+  };
+}
+
 export async function GetComputedListing(
   listingId: number,
 ): Promise<ComputedListing> {
@@ -63,7 +102,7 @@ export async function GetComputedListing(
     ownerId: listing.OwnerId,
     name: listing.Name,
     maxSize: listing.MaxSize,
-    limitDate: listing.LimitDate,
+    limitDate: listing.LimitDate!,
     invitees: [],
     participants: [],
     payers: [],

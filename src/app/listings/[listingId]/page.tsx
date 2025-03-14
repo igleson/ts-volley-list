@@ -1,11 +1,13 @@
+'server client'
+
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { type ComputedListing } from "~/models/ComputedListing";
 import { Invitee, Participant } from "~/app/listings/components/Player";
 import { auth } from "@clerk/nextjs/server";
 import { GetUserInfo } from "~/lib/UserInformation";
 import { zip } from "~/utils/zip";
-import { AddListingEvent } from "~/server/queries";
-import { ListingEventType } from "~/models/ListingEvent";
+import { Suspense } from "react";
+import { GetMockedComputedListing } from "~/server/queries";
 
 export default async function ListingPage({
   params,
@@ -16,72 +18,23 @@ export default async function ListingPage({
 
   const { userId } = await auth();
 
-  const computedListing: ComputedListing = {
-    id: listingId,
-    ownerId: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-    name: "name",
-    limitDate: new Date(2025, 4, 1),
-    participants: [
-      {
-        id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-      },
-      // {
-      //   id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
-      // },
-    ],
-    invitees: [
-      {
-        inviter_id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-        name: "biel",
-      },
-      {
-        inviter_id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
-        name: "adriano",
-      },
-    ],
-    payers: [
-      {
-        id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-      },
-      {
-        inviter_id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-        name: "biel",
-      },
-    ],
-  };
-
-  const participantsUserInfoPromises = computedListing.participants.map(
-    (participant) => GetUserInfo(participant.id),
-  );
-
-  const inviteesUserInfoPromises = computedListing.invitees.map((invitee) =>
-    GetUserInfo(invitee.inviter_id),
-  );
-
-  const participantsUserInfo = zip(
-    computedListing.participants,
-    await Promise.all(participantsUserInfoPromises),
-  );
-
-  const inviteesUserInfo = zip(
-    computedListing.invitees,
-    await Promise.all(inviteesUserInfoPromises),
-  );
+  const computedListing: ComputedListing = await GetMockedComputedListing(listingId);
 
   const loggedUserIsTheOwner = userId === computedListing.ownerId;
   const loggedUserAlreadyOnList = computedListing.participants.some(
     (participant) => participant.id === userId,
   );
 
+
   const addMeToListing = async () => {
     'use server'
-    return await AddListingEvent({
-      listingId,
-      userId: userId!,
-      type: ListingEventType.ADD,
-      date: new Date(),
-      isInvitee: false,
-    });
+    // return await AddListingEvent({
+    //   listingId,
+    //   userId: userId!,
+    //   type: ListingEventType.ADD,
+    //   date: new Date(),
+    //   isInvitee: false,
+    // });
   };
 
   return (
@@ -132,22 +85,20 @@ export default async function ListingPage({
               Me adicionar na lista
             </button>
           )}
-          {participantsUserInfo.map(([participant, [name, imageUrl]]) => (
+          {computedListing.participants.map((participant) => (
             <Participant
-              key={name}
-              ParticipantName={name!}
-              ImageUrl={imageUrl!}
+              key={participant.id}
+              id={participant.id}
               CanRemove={loggedUserIsTheOwner || participant.id === userId}
             ></Participant>
           ))}
           <h1 className="col-auto flex items-center text-2xl"> Convidados: </h1>
           <br className="col-auto flex items-center" />
-          {inviteesUserInfo.map(([invitee, [inviterName, inviterImageUrl]]) => (
+          {computedListing.invitees.map((invitee) => (
             <Invitee
               key={`invitee-${invitee.inviter_id}`}
               InviteeName={invitee.name}
-              InviterName={inviterName!}
-              InviterImageUrl={inviterImageUrl!}
+              InviterId={invitee.inviter_id}
               CanRemove={loggedUserIsTheOwner || invitee.inviter_id === userId}
             ></Invitee>
           ))}
