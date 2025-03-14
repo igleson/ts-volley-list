@@ -48,10 +48,10 @@ export default function HomePage() {
     setIsSaving(true);
     toast("criando lista");
     void CreateListing({
-      listingName: listingNameRef.current.value,
-      maxSize: maxSizeRef.current.value,
+      listingName: listingNameRef.current,
+      maxSize: maxSizeRef.current,
       limitDate: hasLimitDate
-        ? new Date(limitDateRef.current.value)
+        ? new Date(limitDateRef.current)
         : null,
     })
       .then((listings) => {

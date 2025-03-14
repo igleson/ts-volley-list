@@ -30,9 +30,7 @@ type ValidatedInputProps<T> = {
   onValidation?: (isValid: boolean) => void;
 };
 
-export function ValidatedInput<T>({
-  ...props
-}: ValidatedInputProps<T>) {
+export function ValidatedInput<T>({ ...props }: ValidatedInputProps<T>) {
   const [inputValid, setInputValid] = useState(true);
   const [inputError, setInputError] = useState<string | undefined>(undefined);
 
