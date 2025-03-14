@@ -45,12 +45,12 @@ export function ValidatedInput<T>({ ...props }: ValidatedInputProps<T>) {
         max={props.max}
         onBlur={() => {
           const value = props.intoType
-            ? props.intoType(props.ref.current.value)
-            : props.ref.current.value;
+            ? props.intoType(props?.ref?.current)
+            : props.ref.current;
           console.log(typeof value);
           validateData(props.zodType, value, (hasError, errors) => {
             setInputValid(!hasError);
-            props.onValidation && props.onValidation(!hasError);
+            if(props.onValidation) props.onValidation(!hasError);
             if (hasError && !props.disabled) {
               setInputError(errors?.issues[0]?.message);
             } else {
