@@ -1,4 +1,4 @@
-'server client'
+"server client";
 
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { type ComputedListing } from "~/models/ComputedListing";
@@ -18,16 +18,16 @@ export default async function ListingPage({
 
   const { userId } = await auth();
 
-  const computedListing: ComputedListing = await GetMockedComputedListing(listingId);
+  const computedListing: ComputedListing =
+    await GetMockedComputedListing(listingId);
 
   const loggedUserIsTheOwner = userId === computedListing.ownerId;
   const loggedUserAlreadyOnList = computedListing.participants.some(
     (participant) => participant.id === userId,
   );
 
-
   const addMeToListing = async () => {
-    'use server'
+    "use server";
     // return await AddListingEvent({
     //   listingId,
     //   userId: userId!,
@@ -38,7 +38,7 @@ export default async function ListingPage({
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main className="flex min-h-screen w-[80%] max-w-[600px] min-w-[500px] flex-col items-center justify-center text-white">
       <SignedIn>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 text-slate-400">
           <div className="grid grid-cols-2 gap-4">
@@ -73,35 +73,42 @@ export default async function ListingPage({
               </div>
             )}
           </div>
-          <br />
-          <h1 className="col-auto flex items-center text-2xl">
-            Participantes:
-          </h1>
-          {!loggedUserAlreadyOnList && (
-            <button
-              onClick={addMeToListing}
-              className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
-            >
-              Me adicionar na lista
-            </button>
-          )}
-          {computedListing.participants.map((participant) => (
-            <Participant
-              key={participant.id}
-              id={participant.id}
-              CanRemove={loggedUserIsTheOwner || participant.id === userId}
-            ></Participant>
-          ))}
-          <h1 className="col-auto flex items-center text-2xl"> Convidados: </h1>
-          <br className="col-auto flex items-center" />
-          {computedListing.invitees.map((invitee) => (
-            <Invitee
-              key={`invitee-${invitee.inviter_id}`}
-              InviteeName={invitee.name}
-              InviterId={invitee.inviter_id}
-              CanRemove={loggedUserIsTheOwner || invitee.inviter_id === userId}
-            ></Invitee>
-          ))}
+          <div className="relative w-full items-center p-2">
+            <h1 className="col-auto flex items-center text-2xl">
+              Participantes:
+            </h1>
+            {!loggedUserAlreadyOnList && (
+              <button
+                onClick={addMeToListing}
+                className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+              >
+                Me adicionar na lista
+              </button>
+            )}
+            {computedListing.participants.map((participant) => (
+              <Participant
+                key={participant.id}
+                id={participant.id}
+                CanRemove={loggedUserIsTheOwner || participant.id === userId}
+              ></Participant>
+            ))}
+          </div>
+
+          <div className="relative w-full items-center p-2">
+            <h1 className="col-auto flex items-center text-2xl">
+              Convidados:
+            </h1>
+            {computedListing.invitees.map((invitee) => (
+                <Invitee
+                    key={`invitee-${invitee.inviter_id}-${invitee.name}`}
+                    InviteeName={invitee.name}
+                    InviterId={invitee.inviter_id}
+                    CanRemove={
+                        loggedUserIsTheOwner || invitee.inviter_id === userId
+                    }
+                ></Invitee>
+            ))}
+          </div>
         </div>
       </SignedIn>
       <SignedOut>

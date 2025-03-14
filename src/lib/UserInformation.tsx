@@ -8,7 +8,8 @@ function delay(ms: number) {
   
 
 export async function GetUserInfo(userId: string) {
-    'use cache';
+    // 'use cache';
+    await (delay(100))
     const client = await clerkClient();
     const user = await client.users.getUser(userId)
 
