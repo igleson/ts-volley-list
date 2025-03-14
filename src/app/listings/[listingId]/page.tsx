@@ -4,9 +4,6 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { type ComputedListing } from "~/models/ComputedListing";
 import { Invitee, Participant } from "~/app/listings/components/Player";
 import { auth } from "@clerk/nextjs/server";
-import { GetUserInfo } from "~/lib/UserInformation";
-import { zip } from "~/utils/zip";
-import { Suspense } from "react";
 import { GetMockedComputedListing } from "~/server/queries";
 
 export default async function ListingPage({

@@ -6,7 +6,7 @@ import { CreateListing } from "~/server/queries";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loadingSpinner";
-import { type ErrorMapCtx, z, type ZodError } from "zod";
+import { type ErrorMapCtx, z } from "zod";
 import moment from "moment";
 import { ValidatedInput } from "~/components/ui/ValidatedInput";
 
