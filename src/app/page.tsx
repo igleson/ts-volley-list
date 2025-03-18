@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { CreateListing } from "~/server/queries";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { LoadingSpinner } from "~/components/ui/loadingSpinner";
 import { type ErrorMapCtx, z } from "zod";
 import moment from "moment";
-import { ValidatedInput } from "~/components/ui/ValidatedInput";
-import dynamic from "next/dynamic";
+import { AnyFieldMeta, FieldApi, useForm } from "@tanstack/react-form";
+import { CreateListing } from "~/server/queries";
+import { toast } from "sonner";
+import { LoadingSpinner } from "~/components/ui/loadingSpinner";
 
 z.setErrorMap((issue: z.ZodIssueOptionalMessage, ctx: ErrorMapCtx) => {
   if (issue.code === z.ZodIssueCode.invalid_date) {
@@ -31,157 +29,234 @@ const limitDateSchema = z
   .date()
   .min(new Date(), { message: "Data limite não pode estar no passado" });
 
-function NewInputElement(starting: string) {
-  const element = document.createElement("input");
-  element.value = starting;
-  return element;
-}
+const CreateListingSchema = z
+  .object({
+    ListingName: listingNameSchema,
+    MaxSize: maxSizeSchema,
+    HasLimitDate: z.literal(false),
+    LimitDate: z.date().nullable(),
+  })
+  .or(
+    z.object({
+      ListingName: listingNameSchema,
+      MaxSize: maxSizeSchema,
+      HasLimitDate: z.literal(true),
+      LimitDate: limitDateSchema,
+    }),
+  );
 
-function ClientOnlyHomePage() {
+type CreateListingOptions = z.infer<typeof CreateListingSchema>;
+
+export default function ClientOnlyHomePage() {
   const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
+  const form = useForm({
+    defaultValues: {
+      ListingName: "Nova lista",
+      MaxSize: 10,
+      HasLimitDate: false,
+      LimitDate: minDate,
+    } as CreateListingOptions,
+    validators: {
+      onChange: CreateListingSchema,
+    },
+    onSubmit: async (formData) => {
+      console.log(formData);
+      const listings = await CreateListing({
+        listingName: formData.value.ListingName,
+        maxSize: formData.value.MaxSize,
+        limitDate: formData.value.HasLimitDate
+          ? formData.value.LimitDate
+          : null,
+      });
+      if (listings && listings[0]) {
+        toast("lista criada");
+        router.push(`listings/${listings[0].Id}`);
+      } else if (listings && listings[0] && listings.length > 1) {
+        toast("lista não pôde ser criada");
+        throw new Error("More than one listing created");
+      } else {
+        toast("lista não pôde ser criada");
+        throw new Error("Listing not created");
+      }
+    },
+  });
+
   const router = useRouter();
 
-  const listingNameRef = useRef<HTMLInputElement>(
-      NewInputElement("Nova lista"),
-  );
-  const maxSizeRef = useRef<HTMLInputElement>(NewInputElement("10"));
-  const limitDateRef = useRef<HTMLInputElement>(
-      NewInputElement(moment(minDate).format("YYYY-MM-DDTHH:mm")),
-  );
-  const [hasLimitDate, setHasLimitDate] = useState<boolean>(false);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-
-  const [isNameValid, setIsNameValid] = useState<boolean>(true);
-  const [isMaxValueValid, setIsMaxValueValid] = useState<boolean>(true);
-  const [isDateValid, setIsDateValid] = useState<boolean>(true);
-
-  const SaveListing = () => {
-    setIsSaving(true);
-    toast("criando lista");
-    void CreateListing({
-      listingName: listingNameRef.current.value,
-      maxSize: maxSizeRef.current.valueAsNumber,
-      limitDate: hasLimitDate ? limitDateRef.current.valueAsDate : null,
-    })
-        .then((listings) => {
-          if (listings.length == 1) {
-            toast("lista criada");
-            router.push(`listings/${listings[0]!.Id}`);
-          } else if (listings.length == 0) {
-            toast("lista não pôde ser criada");
-            throw new Error("Listing not created");
-          } else {
-            toast("lista não pôde ser criada");
-            throw new Error("More than one listing created");
-          }
-        })
-        .finally(() => {
-          setIsSaving(false);
-        });
-  };
-
   return (
-      <main className="flex min-h-screen flex-col items-center justify-center text-white">
-        <SignedIn>
+    <main className="flex min-h-screen flex-col items-center justify-center text-white">
+      <SignedIn>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
           <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
             <div className="text-4xl text-gray-200"> Criar Lista</div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-auto flex items-center">
-                <label
-                    htmlFor="list-name-input"
-                    className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
-                >
-                  Nome da lista:
-                </label>
-              </div>
-              <div className="col-auto">
-                <ValidatedInput
-                    type="text"
-                    id="list-name-input"
-                    required={true}
-                    ref={listingNameRef}
-                    defaultValue="Nova lista"
-                    zodType={listingNameSchema}
-                    onValidation={setIsNameValid}
-                />
-              </div>
+              <form.Field
+                name="ListingName"
+                children={(field) => (
+                  <>
+                    <div className="col-auto flex items-center">
+                      <label
+                        htmlFor="list-name-input"
+                        className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
+                      >
+                        Nome da lista:
+                      </label>
+                    </div>
+
+                    <div className="col-auto">
+                      <div className="flex flex-col">
+                        <input
+                          type="text"
+                          id="list-name-input"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
+                        />
+                        <FieldIError fieldMeta={field.state.meta} />
+                      </div>
+                    </div>
+                  </>
+                )}
+              ></form.Field>
+
+              <form.Field
+                name="MaxSize"
+                children={(field) => (
+                  <>
+                    <div className="col-auto flex items-center">
+                      <label
+                        htmlFor="max-number-input"
+                        className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
+                      >
+                        Número máximo de jogadores da lista:
+                      </label>
+                    </div>
+                    <div className="col-auto">
+                      <input
+                        type="number"
+                        id="max-number-input"
+                        min={2}
+                        max={25}
+                        required={true}
+                        value={field.state.value}
+                        onChange={(e) =>
+                          field.handleChange(e.target.valueAsNumber)
+                        }
+                        className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
+                      />
+                      <FieldIError fieldMeta={field.state.meta} />
+                    </div>
+                  </>
+                )}
+              ></form.Field>
 
               <div className="col-auto flex items-center">
                 <label
-                    htmlFor="max-number-input"
-                    className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
-                >
-                  Número máximo de jogadores da lista:
-                </label>
-              </div>
-              <div className="col-auto">
-                <ValidatedInput
-                    type="number"
-                    id="max-number-input"
-                    min={2}
-                    max={25}
-                    required={true}
-                    ref={maxSizeRef}
-                    defaultValue="12"
-                    zodType={maxSizeSchema}
-                    intoType={Number}
-                    onValidation={setIsMaxValueValid}
-                />
-              </div>
-              <div className="col-auto flex items-center">
-                <label
-                    htmlFor="limit-datetime-input"
-                    className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
+                  htmlFor="limit-datetime-input"
+                  className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
                 >
                   Data Limite para retirar o nome e não pagar:
                 </label>
               </div>
               <div className="col-auto flex items-center gap-0">
-                <input
-                    checked={hasLimitDate}
-                    onChange={(_) => setHasLimitDate(!hasLimitDate)}
-                    type="checkbox"
-                    className="h-4 w-4 rounded-lg border-slate-900 bg-slate-700 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                />
-                <ValidatedInput
-                    type="datetime-local"
-                    id="limit-datetime-input"
-                    required={hasLimitDate}
-                    disabled={!hasLimitDate}
-                    ref={limitDateRef}
-                    min={moment(minDate).format("YYYY-MM-DDTHH:mm")}
-                    defaultValue={moment(minDate).format("YYYY-MM-DDTHH:mm")}
-                    zodType={limitDateSchema}
-                    intoType={(str) => (str ? new Date(str) : undefined)}
-                    onValidation={setIsDateValid}
-                />
+                <form.Field
+                  name="HasLimitDate"
+                  children={(field) => (
+                    <input
+                      checked={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.checked)}
+                      type="checkbox"
+                      className="h-4 w-4 rounded-lg border-slate-900 bg-slate-700 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                    />
+                  )}
+                ></form.Field>
+                <form.Subscribe
+                  selector={(state) => state.values.HasLimitDate}
+                  children={(hasLimitDate) => (
+                    <form.Field
+                      name="LimitDate"
+                      children={(field) => (
+                        <div>
+                          <input
+                            type="datetime-local"
+                            id="limit-datetime-input"
+                            min={moment(minDate).format("YYYY-MM-DDTHH:mm")}
+                            disabled={!hasLimitDate}
+                            onChange={(e) =>
+                              field.handleChange(new Date(e.target.value))
+                            }
+                            value={moment(field.state.value).format(
+                              "YYYY-MM-DDTHH:mm",
+                            )}
+                            className={`${!hasLimitDate || field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
+                          />
+                          <FieldIError
+                            fieldMeta={field.state.meta}
+                            enabled={hasLimitDate}
+                          />
+                        </div>
+                      )}
+                    ></form.Field>
+                  )}
+                ></form.Subscribe>
               </div>
             </div>
-            {!isSaving && (
-                <button
-                    className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
-                    onClick={SaveListing}
-                    disabled={
-                        isSaving || !isNameValid || !isMaxValueValid || !isDateValid
-                    }
-                >
-                  Criar lista
-                </button>
-            )}
-            {isSaving && <LoadingSpinner />}
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting, state.isSubmitSuccessful]}
+              children={([canSubmit, isSubmitting, isSubmitSuccessful]) => (
+                <>
+                    {isSubmitSuccessful ?? isSubmitting ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+                            disabled={!canSubmit}
+                        >
+                            Criar lista
+                        </button>
+                    )}
+                </>
+              )}
+            />
           </div>
-        </SignedIn>
-        <SignedOut>
-          <div className="text-2xl text-slate-200">
-            Você precisa estar logado para criar listas. Clique no botão acima
-            para isso.
-          </div>
-        </SignedOut>
-      </main>
+        </form>
+      </SignedIn>
+      <SignedOut>
+        <div className="text-2xl text-slate-200">
+          Você precisa estar logado para criar listas. Clique no botão acima
+          para isso.
+        </div>
+      </SignedOut>
+    </main>
   );
 }
 
-
-export default dynamic(() => Promise.resolve(ClientOnlyHomePage), {
-  ssr: false,
-});
+function FieldIError({
+  fieldMeta,
+  enabled = true,
+}: {
+  fieldMeta: AnyFieldMeta | undefined;
+  enabled?: boolean;
+}) {
+  return (
+    <>
+      {enabled &&
+      fieldMeta?.isTouched &&
+      fieldMeta?.errors &&
+      fieldMeta.errors[0] ? (
+        <label className="text-[11px] text-red-300">
+          {fieldMeta.errors[0].message}
+        </label>
+      ) : (
+        <br />
+      )}
+    </>
+  );
+}
