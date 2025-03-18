@@ -6,7 +6,7 @@ import { db } from "~/server/db";
 import { auth } from "@clerk/nextjs/server";
 import { listingEvents, listings } from "~/server/db/schema";
 import { type ListingEvent } from "~/models/ListingEvent";
-import { ComputedListing } from "~/models/ComputedListing";
+import { type ComputedListing } from "~/models/ComputedListing";
 import { asc, eq } from "drizzle-orm";
 
 export async function CreateListing(request: ListingRequest) {

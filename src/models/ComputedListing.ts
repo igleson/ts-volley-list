@@ -1,4 +1,4 @@
-import { ListingEvent, ListingEventType } from "~/models/ListingEvent";
+import { type ListingEvent, ListingEventType } from "~/models/ListingEvent";
 
 export type ComputedListing = {
   id: number;

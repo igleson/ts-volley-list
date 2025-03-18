@@ -4,7 +4,7 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { type ErrorMapCtx, z } from "zod";
 import moment from "moment";
-import { AnyFieldMeta, FieldApi, useForm } from "@tanstack/react-form";
+import { type AnyFieldMeta, useForm } from "@tanstack/react-form";
 import { CreateListing } from "~/server/queries";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loadingSpinner";
@@ -18,13 +18,15 @@ z.setErrorMap((issue: z.ZodIssueOptionalMessage, ctx: ErrorMapCtx) => {
 
 const listingNameSchema = z
   .string()
-  .nonempty({ message: "Nome é obrigatório" })
+  .nonempty({
+    message: "Nome é obrigatório",
+  })
   .min(5, { message: "Nome deve conter no mínimo 5 caracteres" })
   .trim();
 const maxSizeSchema = z
   .number()
-  .min(2, { message: "Tamanho não pode ser menor do que 2" })
-  .max(25, { message: "Tamanho não pode ser maior do que 25" });
+  .min(2, { message: "2 é o número mínimo de jogadores" })
+  .max(25, { message: "25 é o número máximo de jogadores" });
 const limitDateSchema = z
   .date()
   .min(new Date(), { message: "Data limite não pode estar no passado" });
@@ -84,13 +86,13 @@ export default function ClientOnlyHomePage() {
   const router = useRouter();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center text-white">
+    <main className="flex min-h-screen w-[80%] min-w-[500px] max-w-[600px] flex-col items-center justify-center p-3 text-white">
       <SignedIn>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            void form.handleSubmit();
           }}
         >
           <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
@@ -141,12 +143,16 @@ export default function ClientOnlyHomePage() {
                       <input
                         type="number"
                         id="max-number-input"
-                        min={2}
-                        max={25}
+                        min={maxSizeSchema.minValue!}
+                        max={maxSizeSchema.maxValue!}
                         required={true}
                         value={field.state.value}
                         onChange={(e) =>
-                          field.handleChange(e.target.valueAsNumber)
+                          field.handleChange(
+                            e.target.value.trim() === ""
+                              ? 0
+                              : e.target.valueAsNumber,
+                          )
                         }
                         className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
                       />
@@ -186,11 +192,17 @@ export default function ClientOnlyHomePage() {
                           <input
                             type="datetime-local"
                             id="limit-datetime-input"
-                            min={moment(minDate).format("YYYY-MM-DDTHH:mm")}
+                            min={moment(limitDateSchema.minDate).format(
+                              "YYYY-MM-DDTHH:mm",
+                            )}
                             disabled={!hasLimitDate}
-                            onChange={(e) =>
-                              field.handleChange(new Date(e.target.value))
-                            }
+                            onChange={(e) => {
+                              try {
+                                field.handleChange(new Date(e.target.value));
+                              } catch (e) {
+                                field.handleChange(limitDateSchema.minDate);
+                              }
+                            }}
                             value={moment(field.state.value).format(
                               "YYYY-MM-DDTHH:mm",
                             )}
@@ -208,20 +220,24 @@ export default function ClientOnlyHomePage() {
               </div>
             </div>
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isSubmitSuccessful]}
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.isSubmitSuccessful,
+              ]}
               children={([canSubmit, isSubmitting, isSubmitSuccessful]) => (
                 <>
-                    {isSubmitSuccessful ?? isSubmitting ? (
-                        <LoadingSpinner />
-                    ) : (
-                        <button
-                            type="submit"
-                            className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
-                            disabled={!canSubmit}
-                        >
-                            Criar lista
-                        </button>
-                    )}
+                  {isSubmitSuccessful || isSubmitting ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <button
+                      type="submit"
+                      className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"
+                      disabled={!canSubmit}
+                    >
+                      Criar lista
+                    </button>
+                  )}
                 </>
               )}
             />
@@ -245,18 +261,25 @@ function FieldIError({
   fieldMeta: AnyFieldMeta | undefined;
   enabled?: boolean;
 }) {
+  const error =
+    enabled && fieldMeta?.isTouched && fieldMeta?.errors && fieldMeta.errors[0]
+      ? fieldMeta.errors.map((e) => e.message).join(", ")
+      : undefined;
+
   return (
-    <>
-      {enabled &&
-      fieldMeta?.isTouched &&
-      fieldMeta?.errors &&
-      fieldMeta.errors[0] ? (
-        <label className="text-[11px] text-red-300">
-          {fieldMeta.errors[0].message}
-        </label>
+    <div className="relative min-h-[20px]">
+      {error ? (
+        <span
+          className="absolute left-0 right-0 cursor-help truncate text-[12px] text-red-300"
+          title={error}
+        >
+          {error}
+        </span>
       ) : (
-        <br />
+        <span className="invisible absolute left-0 right-0 truncate">
+          placeholder
+        </span>
       )}
-    </>
+    </div>
   );
 }
