@@ -148,8 +148,7 @@ async function ListingPage({
       </SignedIn>
       <SignedOut>
         <div className="text-2xl text-gray-400">
-          Você precisa estar logado para criar ou visualizar listas. Clique no
-          botão acima para isso.
+          Redirecionando para a página de login...
         </div>
       </SignedOut>
     </main>

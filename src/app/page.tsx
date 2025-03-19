@@ -8,6 +8,7 @@ import { type AnyFieldMeta, useForm } from "@tanstack/react-form";
 import { CreateListing } from "~/server/queries";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loadingSpinner";
+import { useTransition } from "react";
 
 z.setErrorMap((issue: z.ZodIssueOptionalMessage, ctx: ErrorMapCtx) => {
   if (issue.code === z.ZodIssueCode.invalid_date) {
@@ -51,6 +52,8 @@ type CreateListingOptions = z.infer<typeof CreateListingSchema>;
 
 export default function ClientOnlyHomePage() {
   const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
+  let [isPending, startTransition] = useTransition();
+
   const form = useForm({
     defaultValues: {
       ListingName: "Nova lista",
@@ -71,7 +74,7 @@ export default function ClientOnlyHomePage() {
       });
       if (listings && listings[0]) {
         toast("lista criada");
-        router.push(`listings/${listings[0].Id}`);
+        startTransition(() => router.push(`listings/${listings[0]!.Id}`));
       } else if (listings && listings[0] && listings.length > 1) {
         toast("lista não pôde ser criada");
         throw new Error("More than one listing created");
@@ -245,8 +248,7 @@ export default function ClientOnlyHomePage() {
       </SignedIn>
       <SignedOut>
         <div className="text-2xl text-slate-200">
-          Você precisa estar logado para criar listas. Clique no botão acima
-          para isso.
+          Redirecionando para a página de login...
         </div>
       </SignedOut>
     </main>
