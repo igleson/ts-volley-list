@@ -52,7 +52,7 @@ type CreateListingOptions = z.infer<typeof CreateListingSchema>;
 
 export default function ClientOnlyHomePage() {
   const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
-  let [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
 
   const form = useForm({
     defaultValues: {
