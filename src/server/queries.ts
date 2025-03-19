@@ -25,7 +25,6 @@ export async function CreateListing(request: ListingRequest) {
 }
 
 export async function AddListingEvent(event: ListingEvent) {
-  console.log(event);
   const { userId } = await auth();
 
   if (!userId) throw Error("Unauthorized");
@@ -39,7 +38,7 @@ function delay(ms: number) {
 
 
 export async function GetMockedComputedListing(listingId: number): Promise<ComputedListing> {
-  await delay(1000);
+  await delay(3000);
   return {
     id: listingId,
     ownerId: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
@@ -47,7 +46,7 @@ export async function GetMockedComputedListing(listingId: number): Promise<Compu
     limitDate: new Date(2025, 4, 1),
     participants: [
       {
-        id: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
+        id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
       },
     ],
     invitees: [

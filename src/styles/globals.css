@@ -133,3 +133,26 @@ body {
         @apply cursor-not-allowed opacity-25;
     }
 }
+
+@layer components {
+    .loading-animation:not(div) {
+        /*bg-gray-500*/
+        --tw-bg-opacity: 1;
+        background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1)); /* #6b7280 */
+
+        /*text-gray-500*/
+        --tw-text-opacity: 1;
+        color: rgb(107 114 128 / var(--tw-text-opacity, 1));
+
+        /*animate-pulse*/
+        @keyframes pulse {
+            50% {
+                opacity: .5;
+            }
+        }
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        /*border-gray-700*/
+        --tw-border-opacity: 1;
+        border-color: rgb(55 65 81 / var(--tw-border-opacity, 1)); /* #374151 */
+    }
+}

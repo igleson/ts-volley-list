@@ -1,8 +1,8 @@
 export type ListingEvent = {
   userId: string;
   listingId: number;
-  date: Date;
   isInvitee: boolean;
+  inviteeName?: string;
   type: ListingEventType;
 };
 

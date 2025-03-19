@@ -62,7 +62,6 @@ export default function ClientOnlyHomePage() {
       onChange: CreateListingSchema,
     },
     onSubmit: async (formData) => {
-      console.log(formData);
       const listings = await CreateListing({
         listingName: formData.value.ListingName,
         maxSize: formData.value.MaxSize,

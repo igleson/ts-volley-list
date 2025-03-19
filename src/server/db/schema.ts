@@ -48,13 +48,16 @@ export const listingEvents = createTable(
   {
     listingId: integer("listing_id").notNull(),
     userId: varchar("user_id", { length: 255 }).notNull(),
-    date: timestamp("date", { withTimezone: true }).notNull(),
+    date: timestamp("date", { withTimezone: true }).notNull().defaultNow(),
     isInvitee: boolean("is_invitee").notNull(),
-    type: ListingEventTypeEnum("type").default(ListingEventType.ADD.toString()).notNull(),
+    inviteeName: varchar("invitee_name", { length: 255 }),
+    type: ListingEventTypeEnum("type")
+      .default(ListingEventType.ADD.toString())
+      .notNull(),
   },
   (table) => ({
     primaryKey: primaryKey({
-      columns: [table.listingId, table.userId, table.date],
+      columns: [table.listingId, table.inviteeName, table.userId, table.date],
     }),
     nameIndex: index("listing_id_idx").on(table.listingId),
   }),
