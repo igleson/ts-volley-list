@@ -33,7 +33,7 @@ export default async function ListingPage({
   };
 
   return (
-    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[600px] flex-col  p-3 text-white">
+    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[550px] flex-col  p-3 text-white">
       <SignedIn>
         <div className="container flex flex-col gap-12 px-4 py-16 text-slate-400">
           <h1 className="flex justify-start text-2xl">

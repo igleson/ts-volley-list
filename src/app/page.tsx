@@ -91,7 +91,7 @@ export default function ClientOnlyHomePage() {
   if (isTransitioning) return <ListingLoading />;
 
   return (
-    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[575px] flex-col items-center justify-center p-3 text-white">
+    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[550px] flex-col items-center justify-center p-3 text-white">
       <SignedIn>
         <form
           onSubmit={(e) => {
