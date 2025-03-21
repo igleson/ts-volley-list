@@ -68,8 +68,8 @@ export default async function ListingPage({
               </div>
             )}
           </div>
-          <div className="relative w-full items-center p-2">
-            <h1 className={`col-auto flex items-center text-2xl`}>
+          <div className="grid grid-cols-1  w-full items-center p-2">
+            <h1 className={`items-center text-2xl`}>
               Participantes:
             </h1>
             {!loggedUserAlreadyOnParticipantList && (
@@ -82,19 +82,20 @@ export default async function ListingPage({
                 </button>
               </div>
             )}
-            {computedListing.participants.map((participant) => (
-              <div key={participant.id} className="py-1">
-                <Participant
-                  listingId={listingId}
-                  key={participant.id}
-                  id={participant.id}
-                  CanRemove={loggedUserIsTheOwner || participant.id === userId}
-                />
-              </div>
-            ))}
+              {computedListing.participants.map((participant) => (
+                  <div key={participant.id} className="py-1">
+                    <Participant
+                        listingId={listingId}
+                        key={participant.id}
+                        id={participant.id}
+                        CanRemove={loggedUserIsTheOwner || participant.id === userId}
+                    />
+                  </div>
+              ))}
+
           </div>
 
-          <div className="relative w-full items-center p-2">
+          <div className="grid grid-cols-1  w-full items-center p-2">
             <h1 className="col-auto flex items-center text-2xl">Convidados:</h1>
 
             <div className="grid grid-cols-2 gap-8 py-3">
@@ -118,7 +119,6 @@ export default async function ListingPage({
                 key={`invitee-${invitee.inviter_id}-${invitee.name}`}
                 className="py-1"
               >
-                <Suspense fallback={"loading"}>
                   <Invitee
                     key={`invitee-${invitee.inviter_id}-${invitee.name}`}
                     listingId={listingId}
@@ -128,7 +128,6 @@ export default async function ListingPage({
                       loggedUserIsTheOwner || invitee.inviter_id === userId
                     }
                   />
-                </Suspense>
               </div>
             ))}
           </div>
