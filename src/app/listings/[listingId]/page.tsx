@@ -7,19 +7,7 @@ import { auth } from "@clerk/nextjs/server";
 import { AddListingEvent, GetMockedComputedListing } from "~/server/queries";
 import { Suspense } from "react";
 
-export default async function SuspensefulListingPage({
-                                            params,
-                                          }: {
-  params: Promise<{ listingId: number }>;
-}) {
-  return (
-      <Suspense fallback={<p>jkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk</p>}>
-        <ListingPage params={params} />
-      </Suspense>
-  )
-}
-
-async function ListingPage({
+export default async function ListingPage({
   params,
 }: {
   params: Promise<{ listingId: number }>;
@@ -46,13 +34,13 @@ async function ListingPage({
   };
 
   return (
-    <main className="flex min-h-screen w-[80%] min-w-[500px] max-w-[600px] flex-col items-center justify-center p-3 text-white">
+    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[600px] flex-col  p-3 text-white">
       <SignedIn>
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 text-slate-400">
+        <div className="container flex flex-col gap-12 px-4 py-16 text-slate-400">
+          <h1 className="flex justify-start text-2xl">
+            Configurações da Lista
+          </h1>
           <div className="grid grid-cols-2 gap-4">
-            <h1 className="col-auto flex items-center text-2xl">
-              Configurações da Lista
-            </h1>
             <div className="col-auto flex items-center"> Nome:</div>
             <div className="col-auto flex items-center">
               {computedListing.name}

@@ -9,6 +9,7 @@ import { CreateListing } from "~/server/queries";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loadingSpinner";
 import { useTransition } from "react";
+import ListingLoading from "~/app/listings/[listingId]/listingLoading";
 
 z.setErrorMap((issue: z.ZodIssueOptionalMessage, ctx: ErrorMapCtx) => {
   if (issue.code === z.ZodIssueCode.invalid_date) {
@@ -52,7 +53,7 @@ type CreateListingOptions = z.infer<typeof CreateListingSchema>;
 
 export default function ClientOnlyHomePage() {
   const minDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24);
-  const [_, startTransition] = useTransition();
+  const [isTransitioning, startTransition] = useTransition();
 
   const form = useForm({
     defaultValues: {
@@ -75,7 +76,7 @@ export default function ClientOnlyHomePage() {
       if (listings && listings[0]) {
         toast("lista criada");
         startTransition(() => router.push(`listings/${listings[0]!.Id}`));
-      } else if (listings && listings[0] && listings.length > 1) {
+      } else if (listings && listings.length > 1) {
         toast("lista não pôde ser criada");
         throw new Error("More than one listing created");
       } else {
@@ -86,6 +87,8 @@ export default function ClientOnlyHomePage() {
   });
 
   const router = useRouter();
+
+  if (isTransitioning) return <ListingLoading />;
 
   return (
     <main className="flex min-h-screen w-[80%] min-w-[500px] max-w-[600px] flex-col items-center justify-center p-3 text-white">

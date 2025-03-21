@@ -38,6 +38,8 @@ function delay(ms: number) {
 
 
 export async function GetMockedComputedListing(listingId: number): Promise<ComputedListing> {
+
+  await delay(200);
   return {
     id: listingId,
     ownerId: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
