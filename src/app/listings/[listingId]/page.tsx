@@ -5,7 +5,6 @@ import { type ComputedListing } from "~/models/ComputedListing";
 import { Invitee, Participant } from "~/app/listings/components/Player";
 import { auth } from "@clerk/nextjs/server";
 import { AddListingEvent, GetMockedComputedListing } from "~/server/queries";
-import { Suspense } from "react";
 
 export default async function ListingPage({
   params,

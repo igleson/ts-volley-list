@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { shadesOfPurple } from "@clerk/themes";
 import { TopNav } from "~/components/ui/topnav";
 import { Toaster } from "sonner";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Gerenciador de listas",

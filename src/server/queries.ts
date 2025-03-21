@@ -33,12 +33,28 @@ export async function AddListingEvent(event: ListingEvent) {
 }
 
 function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export async function MyLists(userId: string) {
+  //TODO mocked
+  const myLists = [
+    { name: "nome da lista 100", id: 100 },
+    { name: "nome da lista 101", id: 101 },
+    { name: "nome da lista 102", id: 102 },
+  ];
+  const participatingListings = [
+    { name: "nome da lista e participação 103", id: 103 },
+    { name: "nome da lista e participação 104", id: 104 },
+    { name: "nome da lista e participação 105", id: 105 },
+  ];
 
-export async function GetMockedComputedListing(listingId: number): Promise<ComputedListing> {
+  return [myLists, participatingListings];
+}
 
+export async function GetMockedComputedListing(
+  listingId: number,
+): Promise<ComputedListing> {
   await delay(200);
   return {
     id: listingId,
