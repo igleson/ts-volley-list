@@ -31,6 +31,9 @@ export const listings = createTable(
       withTimezone: true,
     }),
     OwnerId: varchar("ownerId", { length: 255 }).notNull(),
+    CreatedDate: timestamp("created_date", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (table) => ({
     nameIndex: index("name_idx").on(table.Id),

@@ -1,13 +1,12 @@
 "use server";
 
 import { type ListingRequest } from "~/models/ListingRequest";
-
 import { db } from "~/server/db";
 import { auth } from "@clerk/nextjs/server";
 import { listingEvents, listings } from "~/server/db/schema";
 import { type ListingEvent } from "~/models/ListingEvent";
 import { type ComputedListing } from "~/models/ComputedListing";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, gt } from "drizzle-orm";
 
 export async function CreateListing(request: ListingRequest) {
   const { userId } = await auth();
@@ -32,35 +31,69 @@ export async function AddListingEvent(event: ListingEvent) {
   return db.insert(listingEvents).values(event).returning();
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export async function MyLists(userId: string) {
+  "use cache";
+
+  const ownedListings = await db
+    .select({
+      name: listings.Name,
+      id: listings.Id,
+    })
+    .from(listings)
+    .where(eq(listings.OwnerId, userId))
+    .orderBy(desc(listings.CreatedDate))
+    .limit(5);
   //TODO mocked
-  const myLists = [
-    { name: "nome da lista 100", id: 100 },
-    { name: "nome da lista 101", id: 101 },
-    { name: "nome da lista 102", id: 102 },
-  ];
   const participatingListings = [
     { name: "nome da lista e participação 103", id: 103 },
     { name: "nome da lista e participação 104", id: 104 },
     { name: "nome da lista e participação 105", id: 105 },
   ];
 
-  return [myLists, participatingListings];
+  return [ownedListings, participatingListings];
+}
+
+async function ReadComputedListing(listingId: number) {
+  "use cache";
+  return db.query.listings.findFirst({
+    where: eq(listings.Id, listingId),
+  });
+}
+
+async function ReadEvents(
+  listingId: number,
+  after: Date = new Date(2000, 1, 1),
+) {
+  return db.query.listingEvents.findMany({
+    where: and(
+      eq(listingEvents.listingId, listingId),
+      gt(listingEvents.date, after),
+    ),
+  });
 }
 
 export async function GetMockedComputedListing(
   listingId: number,
+  lastEventDate?: Date
 ): Promise<ComputedListing> {
-  await delay(200);
+  const listingPromise = ReadComputedListing(listingId);
+
+  const eventsPromise = ReadEvents(listingId, lastEventDate);
+
+  const [listing, events] = await Promise.all([listingPromise, eventsPromise]);
+
+  console.log(events)
+
+  if (!listing) {
+    throw new Error("listing not found");
+  }
+
   return {
     id: listingId,
-    ownerId: "user_2tx5G1uTk3dqfeCmEuMzP5nw7v7",
-    name: "name",
-    limitDate: new Date(2025, 4, 1),
+    ownerId: listing.OwnerId,
+    name: listing.Name,
+    maxSize: listing.MaxSize,
+    limitDate: listing.LimitDate,
     participants: [
       {
         id: "user_2u0MORnMtLfZTfro1nBm63iBG1K",
