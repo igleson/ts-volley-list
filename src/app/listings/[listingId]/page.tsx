@@ -119,9 +119,8 @@ export default async function ListingPage({
                   listingId={listingId}
                   InviteeName={invitee.name}
                   InviterId={invitee.inviter_id}
-                  CanRemove={
-                    loggedUserIsTheOwner || invitee.inviter_id === userId
-                  }
+                  CanRemove={ loggedUserIsTheOwner || invitee.inviter_id === userId }
+                  CanPromote={ loggedUserIsTheOwner || invitee.inviter_id === userId }
                 />
               </div>
             ))}
