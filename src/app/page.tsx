@@ -110,7 +110,7 @@ export default function ClientOnlyHomePage() {
                     <div className="col-auto flex items-center">
                       <label
                         htmlFor="list-name-input"
-                        className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
+                        className="mb-2 block text-sm font-medium dark:text-white"
                       >
                         Nome da lista:
                       </label>
@@ -123,7 +123,7 @@ export default function ClientOnlyHomePage() {
                           id="list-name-input"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
+                          className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
                         />
                         <FieldIError fieldMeta={field.state.meta} />
                       </div>
@@ -139,7 +139,7 @@ export default function ClientOnlyHomePage() {
                     <div className="col-auto flex items-center">
                       <label
                         htmlFor="max-number-input"
-                        className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
+                        className="mb-2 block text-sm font-medium dark:text-white"
                       >
                         Número máximo de jogadores da lista:
                       </label>
@@ -159,7 +159,7 @@ export default function ClientOnlyHomePage() {
                               : e.target.valueAsNumber,
                           )
                         }
-                        className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
+                        className={`${field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
                       />
                       <FieldIError fieldMeta={field.state.meta} />
                     </div>
@@ -170,7 +170,7 @@ export default function ClientOnlyHomePage() {
               <div className="col-auto flex items-center">
                 <label
                   htmlFor="limit-datetime-input"
-                  className="mb-2 block text-sm font-medium text-slate-200 dark:text-white"
+                  className="mb-2 block text-sm font-medium dark:text-white"
                 >
                   Data Limite para retirar o nome e não pagar:
                 </label>
@@ -211,7 +211,7 @@ export default function ClientOnlyHomePage() {
                             value={moment(field.state.value).format(
                               "YYYY-MM-DDTHH:mm",
                             )}
-                            className={`${!hasLimitDate || field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
+                            className={`${!hasLimitDate || field.state.meta.errors.length == 0 ? "" : "border border-red-500 bg-red-50 text-red-900 placeholder-red-700"} block w-full rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500`}
                           />
                           <FieldIError
                             fieldMeta={field.state.meta}
@@ -250,9 +250,7 @@ export default function ClientOnlyHomePage() {
         </form>
       </SignedIn>
       <SignedOut>
-        <div className="text-2xl text-slate-200">
-          Redirecionando para a página de login...
-        </div>
+        <div className="text-2xl">Redirecionando para a página de login...</div>
       </SignedOut>
     </main>
   );

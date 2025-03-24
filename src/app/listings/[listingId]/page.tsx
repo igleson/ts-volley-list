@@ -1,4 +1,3 @@
-
 import { ListingEventType } from "~/models/ListingEvent";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { type ComputedListing } from "~/models/ComputedListing";
@@ -33,9 +32,9 @@ export default async function ListingPage({
   };
 
   return (
-    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[550px] flex-col  p-3 text-white">
+    <main className="flex min-h-screen w-[80%] min-w-[450px] max-w-[550px] flex-col p-3 text-white">
       <SignedIn>
-        <div className="container flex flex-col gap-12 px-4 py-16 text-slate-400">
+        <div className="container flex flex-col gap-12 px-4 py-16">
           <h1 className="flex justify-start text-2xl">
             Configurações da Lista
           </h1>
@@ -67,10 +66,8 @@ export default async function ListingPage({
               </div>
             )}
           </div>
-          <div className="grid grid-cols-1  w-full items-center p-2">
-            <h1 className={`items-center text-2xl`}>
-              Participantes:
-            </h1>
+          <div className="grid w-full grid-cols-1 items-center p-2">
+            <h1 className={`items-center text-2xl`}>Participantes:</h1>
             {!loggedUserAlreadyOnParticipantList && (
               <div className="py-3">
                 <button
@@ -81,25 +78,24 @@ export default async function ListingPage({
                 </button>
               </div>
             )}
-              {computedListing.participants.map((participant) => (
-                  <div key={participant.id} className="py-1">
-                    <Participant
-                        listingId={listingId}
-                        key={participant.id}
-                        id={participant.id}
-                        CanRemove={loggedUserIsTheOwner || participant.id === userId}
-                    />
-                  </div>
-              ))}
-
+            {computedListing.participants.map((participant) => (
+              <div key={participant.id} className="py-1">
+                <Participant
+                  listingId={listingId}
+                  key={participant.id}
+                  id={participant.id}
+                  CanRemove={loggedUserIsTheOwner || participant.id === userId}
+                />
+              </div>
+            ))}
           </div>
 
-          <div className="grid grid-cols-1  w-full items-center p-2">
+          <div className="grid w-full grid-cols-1 items-center p-2">
             <h1 className="col-auto flex items-center text-2xl">Convidados:</h1>
 
             <div className="grid grid-cols-2 gap-8 py-3">
               <input
-                className="col-auto flex items-start rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="col-auto flex items-start rounded-lg border border-gray-300 bg-slate-700 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 type="text"
                 placeholder="convidado"
               />
@@ -118,24 +114,22 @@ export default async function ListingPage({
                 key={`invitee-${invitee.inviter_id}-${invitee.name}`}
                 className="py-1"
               >
-                  <Invitee
-                    key={`invitee-${invitee.inviter_id}-${invitee.name}`}
-                    listingId={listingId}
-                    InviteeName={invitee.name}
-                    InviterId={invitee.inviter_id}
-                    CanRemove={
-                      loggedUserIsTheOwner || invitee.inviter_id === userId
-                    }
-                  />
+                <Invitee
+                  key={`invitee-${invitee.inviter_id}-${invitee.name}`}
+                  listingId={listingId}
+                  InviteeName={invitee.name}
+                  InviterId={invitee.inviter_id}
+                  CanRemove={
+                    loggedUserIsTheOwner || invitee.inviter_id === userId
+                  }
+                />
               </div>
             ))}
           </div>
         </div>
       </SignedIn>
       <SignedOut>
-        <div className="text-2xl text-gray-400">
-          Redirecionando para a página de login...
-        </div>
+        <div className="text-2xl">Redirecionando para a página de login...</div>
       </SignedOut>
     </main>
   );
