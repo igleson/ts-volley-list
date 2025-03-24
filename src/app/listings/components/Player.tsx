@@ -14,6 +14,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
+import { ConfirmationDialog } from "~/components/ui/confirmation-dialog";
 
 type ParticipantProps = {
   listingId: number;
@@ -23,7 +24,7 @@ type ParticipantProps = {
 
 function LoadingParticipant() {
   return (
-    <div className="loading-animation flex flex-auto items-center rounded-md border-[1px] p-2">
+    <div className="loading-animation flex flex-auto items-center rounded-md border p-2">
       <div className="col-auto flex flex-auto items-center">
         <svg
           className="flex aspect-square h-[50px] max-h-[50px] w-[50px] max-w-[50px] flex-auto items-center rounded-full object-cover dark:text-gray-700"
@@ -119,12 +120,19 @@ export function Participant(props: ParticipantProps) {
           </strong>
         </div>
         <div className="col-auto items-end">
-          <button
-            className="rounded-full border border-red-400 p-2"
-            disabled={!props.CanRemove}
+          <ConfirmationDialog
+              title="Remover participante"
+              description="Não é possível reverter essa operação, tem certeza que deseja remover esse participante?"
           >
-            <span className="font-semibold text-red-400">Remover</span>
-          </button>
+            <button
+                className="rounded-full border border-red-400 p-2"
+                disabled={!props.CanRemove}
+            >
+              <span className="bg-transparent font-semibold text-red-400">Remover</span>
+            </button>
+          </ConfirmationDialog>
+
+
         </div>
       </div>
     </Suspense>
@@ -265,14 +273,24 @@ export function Invitee(props: InviteeProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-gradient-to-br from-purple-950 to-purple-700 text-white">
               <DropdownMenuGroup>
-                <DropdownMenuItem disabled={!props.CanRemove}>
-                  Remover
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={!props.CanRemove}>
+                    <ConfirmationDialog
+                        title={`Remover convidado ${props.InviteeName} de ${InviterName}`}
+                        description="Não é possível reverter essa operação, tem certeza que deseja remover esse convidado?"
+                    >
+                      <span className="bg-transparent">Remover</span>
+                    </ConfirmationDialog>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem disabled={!props.CanPromote}>
-                  Promover
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={!props.CanPromote}>
+                  <ConfirmationDialog
+                      title={`Promover convidado ${props.InviteeName} de ${InviterName}`}
+                      description="Não é possível reverter essa operação, tem certeza que deseja promover esse convidado?"
+                  >
+                    <span className="bg-transparent">Promover</span>
+                  </ConfirmationDialog>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>

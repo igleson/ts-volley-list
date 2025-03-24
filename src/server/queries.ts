@@ -82,8 +82,6 @@ export async function GetMockedComputedListing(
 
   const [listing, events] = await Promise.all([listingPromise, eventsPromise]);
 
-  console.log(events)
-
   if (!listing) {
     throw new Error("listing not found");
   }
